@@ -21,25 +21,76 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
             fit: BoxFit.cover,
           ),
           Positioned(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const ImageIcon(
-                    AssetImage('images/chat.png'),
-                    size: 100,
+            bottom: 170,
+            left: 90,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const ImageIcon(
+                  AssetImage('images/chat.png'),
+                  size: 100,
+                  color: Colors.white,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Convo Craft",
+                  style: GoogleFonts.tourney().copyWith(
                     color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(
-                    height: 20,
+                ),
+                const SizedBox(
+                  height: 6,
+                ),
+                const Text(
+                  "Online messaging made easy",
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 189, 187, 187),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w100),
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                const Text(
+                  "Join for free",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 165, 164, 164),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w100,
                   ),
-                  Text(
-                    "Conco Craft",
-                    textAlign: TextAlign.left,
-                    style: GoogleFonts.aboreto().copyWith(color: Colors.white),
-                  )
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.arrow_right_alt_sharp,
+                    size: 24,
+                  ),
+                  label: const Text(
+                    "Get Started",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 6,
+                    shadowColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 30),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                    ),
+                    backgroundColor: Color.fromARGB(255, 139, 70, 244),
+                  ),
+                )
+              ],
             ),
           )
         ],
