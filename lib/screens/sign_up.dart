@@ -1,4 +1,3 @@
-import 'package:convocraft/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,6 +9,23 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  String? enteredname;
+  String? enteredEmail;
+  String? enteredPassword;
+
+  final _formKey = GlobalKey<FormState>();
+
+  void submit() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      _formKey.currentState!.reset();
+
+      print(enteredname);
+      print(enteredEmail);
+      print(enteredPassword);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +83,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       radius: 50,
                       backgroundImage: AssetImage("images/bg-1.jpg"),
                     ),
@@ -75,6 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 30,
                     ),
                     Form(
+                      key: _formKey,
                       child: FormField(
                         builder: (context) {
                           return Column(
@@ -83,16 +100,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 decoration: const InputDecoration(
                                   label: Text("Enter your Name"),
                                 ),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value.length > 50 ||
+                                      value.length <= 1) {
+                                    return "Name must be 1 and 50 characters.";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (name) {
+                                  enteredname = name;
+                                },
                               ),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   label: Text("Enter your Email"),
                                 ),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value.length > 50 ||
+                                      value.length <= 1) {
+                                    return "Name must be 1 and 50 characters.";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (email) {
+                                  enteredEmail = email;
+                                },
                               ),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   label: Text("Enter your Password"),
                                 ),
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value.length > 50 ||
+                                      value.length <= 1) {
+                                    return "Name must be 1 and 50 characters.";
+                                  }
+                                  return null;
+                                },
+                                onSaved: (password) {
+                                  enteredPassword = password;
+                                },
                               ),
                             ],
                           );
@@ -103,14 +156,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 100,
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (ctx) => const RegisterScreen(),
-                          ),
-                        );
-                      },
+                      onPressed: submit,
                       icon: const Icon(
                         Icons.arrow_right_alt_sharp,
                         size: 24,
@@ -122,7 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       style: ElevatedButton.styleFrom(
                         elevation: 6,
-                        shadowColor: Colors.green,
+                        shadowColor: Colors.purple,
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 30),
                         shape: const RoundedRectangleBorder(
@@ -130,7 +176,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Radius.circular(30),
                           ),
                         ),
-                        backgroundColor: Color.fromARGB(255, 139, 70, 244),
+                        backgroundColor:
+                            const Color.fromARGB(255, 139, 70, 244),
                       ),
                     ),
                   ],
