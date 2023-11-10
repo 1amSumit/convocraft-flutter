@@ -1,5 +1,5 @@
 import "package:uuid/uuid.dart";
-import "dart:io";
+// import "dart:io";
 
 const uuid = Uuid();
 
@@ -16,5 +16,5 @@ class User {
   final String name;
   final String email;
   final String password;
-  final File image;
+  final String image;
 }
