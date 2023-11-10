@@ -1,3 +1,4 @@
+import 'package:convocraft/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -83,10 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage("images/bg-1.jpg"),
-                    ),
+                    const AvatarWidget(),
                     const SizedBox(
                       height: 30,
                     ),
@@ -120,9 +118,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 validator: (value) {
                                   if (value == null ||
                                       value.isEmpty ||
-                                      value.length > 50 ||
                                       value.length <= 1) {
-                                    return "Name must be 1 and 50 characters.";
+                                    return "Please Enter your Email";
                                   }
                                   return null;
                                 },
@@ -138,8 +135,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   if (value == null ||
                                       value.isEmpty ||
                                       value.length > 50 ||
-                                      value.length <= 1) {
-                                    return "Name must be 1 and 50 characters.";
+                                      value.length <= 8) {
+                                    return "Password must be 8 characters.";
                                   }
                                   return null;
                                 },
