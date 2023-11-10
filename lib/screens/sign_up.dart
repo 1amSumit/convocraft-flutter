@@ -1,3 +1,4 @@
+import 'package:convocraft/screens/All_user_screen.dart';
 import 'package:convocraft/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,9 +22,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _formKey.currentState!.save();
       _formKey.currentState!.reset();
 
-      print(enteredname);
-      print(enteredEmail);
-      print(enteredPassword);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) {
+            return AllUserScreen();
+          },
+        ),
+      );
     }
   }
 
