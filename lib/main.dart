@@ -1,9 +1,9 @@
+import 'package:convocraft/firebase_options.dart';
 import 'package:convocraft/screens/All_user_screen.dart';
 import 'package:convocraft/screens/getting_started.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
-import "firebase_options.dart";
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 void main() async {
@@ -24,9 +24,11 @@ class MyApp extends StatelessWidget {
       title: "ConvoCraft",
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (ctx, snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SpinKitThreeInOut();
+            return const SpinKitSpinningLines(
+              color: Colors.black,
+            );
           }
           if (snapshot.hasData) {
             return const AllUserScreen();

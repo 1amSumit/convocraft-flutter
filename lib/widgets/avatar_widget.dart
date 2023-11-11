@@ -16,17 +16,17 @@ class _AvatarWidgetState extends State<AvatarWidget> {
   File? imagePic;
 
   void captureImage() async {
-    final imagePicker = ImagePicker();
-    final imageCaptured = await imagePicker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 300,
-    );
+    final imageCaptured = await ImagePicker()
+        .pickImage(source: ImageSource.camera, maxWidth: 300);
+
     if (imageCaptured == null) {
       return;
     }
+
     setState(() {
       imagePic = File(imageCaptured.path);
     });
+    widget.sendImage(imagePic!);
   }
 
   void uploadFromGallery() async {

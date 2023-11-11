@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({super.key, required this.name});
+  final String name;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -13,7 +15,6 @@ class _ChatScreenState extends State<ChatScreen> {
     const number = "8051950952";
     final res = await FlutterPhoneDirectCaller.callNumber(number);
     print(res);
-    print(number);
   }
 
   @override
@@ -24,14 +25,22 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        title: const Center(
-          child: Text("Hallo"),
+        title: Center(
+          child: Text(widget.name),
         ),
         actions: [
           IconButton(
             onPressed: makeCall,
             icon: const Padding(
                 padding: EdgeInsets.only(right: 30), child: Icon(Icons.phone)),
+          ),
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: const Icon(
+              Icons.exit_to_app,
+            ),
           ),
         ],
       ),

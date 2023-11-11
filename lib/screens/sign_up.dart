@@ -1,9 +1,11 @@
 // import 'package:convocraft/screens/All_user_screen.dart';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convocraft/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:io';
 import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_storage/firebase_storage.dart";
 
 final _firebase = FirebaseAuth.instance;
 
@@ -19,7 +21,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String enteredname = "";
   String enteredEmail = "";
   String enteredPassword = "";
-  late File imageTaken;
+  File? imageTaken;
+  bool isUploading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -32,17 +35,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      _formKey.currentState!.reset();
 
       try {
+        setState(() {
+          isUploading = true;
+        });
         if (isLogin) {
-          final userCredential = _firebase.signInWithEmailAndPassword(
+          final userCredential = await _firebase.signInWithEmailAndPassword(
               email: enteredEmail, password: enteredPassword);
+          print(userCredential);
         } else {
           final userCredintials =
               await _firebase.createUserWithEmailAndPassword(
-                  email: enteredEmail, password: enteredPassword);
+            email: enteredEmail,
+            password: enteredPassword,
+          );
+
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child("user_imges")
+              .child('${userCredintials.user!.uid}.jpg');
+
+          await storageRef.putFile(imageTaken!);
+          final imageUrl = await storageRef.getDownloadURL();
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userCredintials.user!.uid)
+              .set({
+            'username': enteredname,
+            'email': enteredEmail,
+            'image_url': imageUrl
+          });
         }
+        setState(() {
+          isUploading = false;
+        });
       } on FirebaseAuthException catch (error) {
         if (error.code == "email-already-in-use") {
           //...
@@ -53,16 +81,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             content: Text(error.message ?? "Authentication Failed"),
           ),
         );
+        setState(() {
+          isUploading = false;
+        });
       }
-
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (ctx) {
-      //       return AllUserScreen();
-      //     },
-      //   ),
-      // );
     }
   }
 
@@ -123,7 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AvatarWidget(sendImage: getImage),
+                    if (!isLogin) AvatarWidget(sendImage: getImage),
                     const SizedBox(
                       height: 30,
                     ),
@@ -133,23 +155,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         builder: (context) {
                           return Column(
                             children: [
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  label: Text("Enter your Name"),
+                              if (!isLogin)
+                                TextFormField(
+                                  decoration: const InputDecoration(
+                                    label: Text("Enter your Name"),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        value.length > 50 ||
+                                        value.length <= 1) {
+                                      return "Name must be 1 and 50 characters.";
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (name) {
+                                    enteredname = name!;
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length > 50 ||
-                                      value.length <= 1) {
-                                    return "Name must be 1 and 50 characters.";
-                                  }
-                                  return null;
-                                },
-                                onSaved: (name) {
-                                  enteredname = name!;
-                                },
-                              ),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   label: Text("Enter your Email"),
@@ -194,44 +217,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(
                       height: 100,
                     ),
-                    ElevatedButton.icon(
-                      onPressed: submit,
-                      icon: const Icon(
-                        Icons.arrow_right_alt_sharp,
-                        size: 24,
-                      ),
-                      label: Text(
-                        isLogin ? "Log In" : "Sign up",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 6,
-                        shadowColor: Colors.purple,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 30),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
-                          ),
+                    if (isUploading) const CircularProgressIndicator(),
+                    if (!isUploading)
+                      ElevatedButton.icon(
+                        onPressed: submit,
+                        icon: const Icon(
+                          Icons.arrow_right_alt_sharp,
+                          size: 24,
                         ),
-                        backgroundColor:
-                            const Color.fromARGB(255, 139, 70, 244),
+                        label: Text(
+                          isLogin ? "Log In" : "Sign up",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 6,
+                          shadowColor: Colors.purple,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 30),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(30),
+                            ),
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 139, 70, 244),
+                        ),
                       ),
-                    ),
                     const SizedBox(
                       height: 12,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          isLogin = !isLogin;
-                        });
-                      },
-                      child: Text(isLogin
-                          ? "Create an Account"
-                          : "Already have an Account"),
-                    ),
+                    if (!isUploading)
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            isLogin = !isLogin;
+                          });
+                        },
+                        child: Text(isLogin
+                            ? "Create an Account"
+                            : "Already have an Account"),
+                      ),
                   ],
                 ),
               )

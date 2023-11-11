@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import "dart:io";
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,8 +18,8 @@ class StatusWidget extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(100),
-          child: Image.file(
-            File(imagePath),
+          child: Image.network(
+            imagePath,
             width: 60,
             height: 60,
             fit: BoxFit.cover,

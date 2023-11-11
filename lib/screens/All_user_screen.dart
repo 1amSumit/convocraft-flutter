@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convocraft/screens/chat_screen.dart';
 import 'package:convocraft/widgets/profile_pic.dart';
 import 'package:convocraft/widgets/status_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import "package:convocraft/data/dummy_data.dart";
 
 class AllUserScreen extends StatefulWidget {
   const AllUserScreen({super.key});
@@ -14,6 +14,27 @@ class AllUserScreen extends StatefulWidget {
 }
 
 class _AllUserScreenState extends State<AllUserScreen> {
+  List usersData = [];
+  void fetchData() async {
+    final usersDatas =
+        await FirebaseFirestore.instance.collection("users").get();
+
+    final data = usersDatas.docs.map((documnet) {
+      return documnet.data();
+    }).toList();
+
+    setState(() {
+      usersData = data;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,8 +82,8 @@ class _AllUserScreenState extends State<AllUserScreen> {
                   itemCount: usersData.length,
                   itemBuilder: (context, index) {
                     return StatusWidget(
-                        name: usersData[index].name,
-                        imagePath: usersData[index].image);
+                        name: usersData[index]['username'],
+                        imagePath: usersData[index]['image_url']);
                   },
                 ),
               ),
@@ -93,20 +114,22 @@ class _AllUserScreenState extends State<AllUserScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (ctx) {
-                                  return ChatScreen();
+                                  return ChatScreen(
+                                    name: usersData[index]['username'],
+                                  );
                                 },
                               ),
                             );
                           },
                           title: Text(
-                            usersData[index].name,
+                            usersData[index]['username'],
                             style: GoogleFonts.comfortaa().copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: const Text("subtite text"),
                           leading: ProfilePicWidget(
-                              imagePath: usersData[index].image),
+                              imagePath: usersData[index]['image_url']),
                         ),
                       );
                     },

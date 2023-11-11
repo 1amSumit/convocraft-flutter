@@ -1,4 +1,4 @@
-import 'package:convocraft/screens/register_screen.dart';
+import 'package:convocraft/screens/sign_up.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -79,7 +79,7 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (ctx) => const RegisterScreen(),
+                            builder: (ctx) => const SignUpScreen(),
                           ),
                         );
                       },
