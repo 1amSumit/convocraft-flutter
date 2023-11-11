@@ -4,7 +4,9 @@ import "package:image_picker/image_picker.dart";
 import "dart:io";
 
 class AvatarWidget extends StatefulWidget {
-  const AvatarWidget({super.key});
+  const AvatarWidget({super.key, required this.sendImage});
+
+  final void Function(File) sendImage;
 
   @override
   State<AvatarWidget> createState() => _AvatarWidgetState();
@@ -39,6 +41,8 @@ class _AvatarWidgetState extends State<AvatarWidget> {
     setState(() {
       imagePic = File(pickedImage.path);
     });
+
+    widget.sendImage(imagePic!);
   }
 
   @override
@@ -64,7 +68,7 @@ class _AvatarWidgetState extends State<AvatarWidget> {
           width: 100,
           height: 100,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(60),
             child: Image.file(
               imagePic!,
               fit: BoxFit.cover,

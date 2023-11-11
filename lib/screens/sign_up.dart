@@ -1,7 +1,11 @@
-import 'package:convocraft/screens/All_user_screen.dart';
+// import 'package:convocraft/screens/All_user_screen.dart';
 import 'package:convocraft/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:io';
+import "package:firebase_auth/firebase_auth.dart";
+
+final _firebase = FirebaseAuth.instance;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,25 +15,54 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  String? enteredname;
-  String? enteredEmail;
-  String? enteredPassword;
+  bool isLogin = true;
+  String enteredname = "";
+  String enteredEmail = "";
+  String enteredPassword = "";
+  late File imageTaken;
 
   final _formKey = GlobalKey<FormState>();
 
-  void submit() {
+  void getImage(File image) {
+    setState(() {
+      imageTaken = image;
+    });
+  }
+
+  void submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       _formKey.currentState!.reset();
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) {
-            return AllUserScreen();
-          },
-        ),
-      );
+      try {
+        if (isLogin) {
+          final userCredential = _firebase.signInWithEmailAndPassword(
+              email: enteredEmail, password: enteredPassword);
+        } else {
+          final userCredintials =
+              await _firebase.createUserWithEmailAndPassword(
+                  email: enteredEmail, password: enteredPassword);
+        }
+      } on FirebaseAuthException catch (error) {
+        if (error.code == "email-already-in-use") {
+          //...
+        }
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message ?? "Authentication Failed"),
+          ),
+        );
+      }
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (ctx) {
+      //       return AllUserScreen();
+      //     },
+      //   ),
+      // );
     }
   }
 
@@ -90,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const AvatarWidget(),
+                    AvatarWidget(sendImage: getImage),
                     const SizedBox(
                       height: 30,
                     ),
@@ -114,40 +147,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   return null;
                                 },
                                 onSaved: (name) {
-                                  enteredname = name;
+                                  enteredname = name!;
                                 },
                               ),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   label: Text("Enter your Email"),
                                 ),
+                                autocorrect: false,
+                                textCapitalization: TextCapitalization.none,
                                 validator: (value) {
                                   if (value == null ||
                                       value.isEmpty ||
-                                      value.length <= 1) {
-                                    return "Please Enter your Email";
+                                      !value.contains("@")) {
+                                    return "Please Enter a valid Email address.";
                                   }
                                   return null;
                                 },
                                 onSaved: (email) {
-                                  enteredEmail = email;
+                                  enteredEmail = email!;
                                 },
                               ),
                               TextFormField(
                                 decoration: const InputDecoration(
                                   label: Text("Enter your Password"),
                                 ),
+                                obscureText: true,
                                 validator: (value) {
                                   if (value == null ||
                                       value.isEmpty ||
                                       value.length > 50 ||
-                                      value.length <= 8) {
+                                      value.length < 8) {
                                     return "Password must be 8 characters.";
                                   }
                                   return null;
                                 },
                                 onSaved: (password) {
-                                  enteredPassword = password;
+                                  enteredPassword = password!;
                                 },
                               ),
                             ],
@@ -164,9 +200,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Icons.arrow_right_alt_sharp,
                         size: 24,
                       ),
-                      label: const Text(
-                        "Connect",
-                        style: TextStyle(
+                      label: Text(
+                        isLogin ? "Log In" : "Sign up",
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -182,6 +218,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         backgroundColor:
                             const Color.fromARGB(255, 139, 70, 244),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isLogin = !isLogin;
+                        });
+                      },
+                      child: Text(isLogin
+                          ? "Create an Account"
+                          : "Already have an Account"),
                     ),
                   ],
                 ),

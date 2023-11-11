@@ -32,23 +32,6 @@ class RegisterScreen extends StatelessWidget {
                   const SizedBox(
                     height: 30,
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 6,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 105),
-                      backgroundColor: const Color(0xff773EF2),
-                    ),
-                    child: Text(
-                      "Log In",
-                      style: GoogleFonts.roboto()
-                          .copyWith(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                  ),
                   const SizedBox(
                     height: 12,
                   ),
@@ -71,9 +54,9 @@ class RegisterScreen extends StatelessWidget {
                       backgroundColor: const Color(0xFFA54FC9),
                     ),
                     child: Text(
-                      "Sign Up",
+                      "Login or SignUp",
                       style: GoogleFonts.roboto()
-                          .copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+                          .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
                 ],
