@@ -1,3 +1,5 @@
+import 'package:convocraft/widgets/chat_messages.dart';
+import 'package:convocraft/widgets/send_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
@@ -57,9 +59,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     bottomRight: Radius.circular(40),
                   ),
                 ),
+                child: ChatMessagesWidget(),
               ),
             ),
-            Expanded(child: Container()),
+            Expanded(
+              child: SendMessageWidget(
+                recieverUser: widget.name,
+              ),
+            ),
           ],
         ),
       ),

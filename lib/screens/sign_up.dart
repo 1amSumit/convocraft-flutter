@@ -1,6 +1,7 @@
 // import 'package:convocraft/screens/All_user_screen.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:convocraft/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,6 +73,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           isUploading = false;
         });
       } on FirebaseAuthException catch (error) {
+        print("error hai bhaii");
         if (error.code == "email-already-in-use") {
           //...
         }

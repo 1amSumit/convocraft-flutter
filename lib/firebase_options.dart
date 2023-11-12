@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +43,15 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBfdpXvcRCu0gntRtUmnyMnUPOigDmXj74',
+    appId: '1:75782560054:web:4daa3332cca9ffafca3b97',
+    messagingSenderId: '75782560054',
+    projectId: 'convocraft-97e30',
+    authDomain: 'convocraft-97e30.firebaseapp.com',
+    storageBucket: 'convocraft-97e30.appspot.com',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDvD2Qr6yBWFhZSGujVNj9lsowiacknzjE',
     appId: '1:75782560054:android:a57bf10d793de5a4ca3b97',
@@ -64,5 +67,14 @@ class DefaultFirebaseOptions {
     projectId: 'convocraft-97e30',
     storageBucket: 'convocraft-97e30.appspot.com',
     iosBundleId: 'com.example.convocraft',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDB8c9ke2E-c3Bjb_6jqZjSKTqMK5nekPk',
+    appId: '1:75782560054:ios:46e3f04f25cd1d8eca3b97',
+    messagingSenderId: '75782560054',
+    projectId: 'convocraft-97e30',
+    storageBucket: 'convocraft-97e30.appspot.com',
+    iosBundleId: 'com.example.convocraft.RunnerTests',
   );
 }

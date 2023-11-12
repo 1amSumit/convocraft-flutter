@@ -30,7 +30,6 @@ class _AllUserScreenState extends State<AllUserScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchData();
   }
