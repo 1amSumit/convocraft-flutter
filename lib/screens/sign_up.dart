@@ -66,7 +66,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               .set({
             'username': enteredname,
             'email': enteredEmail,
-            'image_url': imageUrl
+            'image_url': imageUrl,
+            "createdAt": Timestamp.now()
           });
         }
         setState(() {

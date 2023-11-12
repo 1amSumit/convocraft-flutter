@@ -14,24 +14,26 @@ class AllUserScreen extends StatefulWidget {
 }
 
 class _AllUserScreenState extends State<AllUserScreen> {
-  List usersData = [];
-  void fetchData() async {
-    final usersDatas =
-        await FirebaseFirestore.instance.collection("users").get();
+  String currentUser = "";
 
-    final data = usersDatas.docs.map((documnet) {
-      return documnet.data();
-    }).toList();
+  void getCurrentUserName() async {
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .get();
+
+    final userName = userData.data()!['username'];
 
     setState(() {
-      usersData = data;
+      currentUser = userName;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    getCurrentUserName();
   }
 
   @override
@@ -73,16 +75,43 @@ class _AllUserScreenState extends State<AllUserScreen> {
               padding: const EdgeInsets.only(left: 30, bottom: 30),
               child: Container(
                 height: 100,
-                child: ListView.separated(
-                  separatorBuilder: (context, index) => const SizedBox(
-                    width: 12,
-                  ),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: usersData.length,
-                  itemBuilder: (context, index) {
-                    return StatusWidget(
-                        name: usersData[index]['username'],
-                        imagePath: usersData[index]['image_url']);
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("users")
+                      .orderBy("createdAt", descending: false)
+                      .snapshots(),
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text("No message found"),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("Something went wrong!.."),
+                      );
+                    }
+                    final usersData = snapshot.data!.docs;
+                    return ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(
+                        width: 12,
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: usersData.length,
+                      itemBuilder: (context, index) {
+                        return currentUser != usersData[index]['username']
+                            ? StatusWidget(
+                                name: usersData[index]['username'],
+                                imagePath: usersData[index]['image_url'])
+                            : null;
+                      },
+                    );
                   },
                 ),
               ),
@@ -98,38 +127,36 @@ class _AllUserScreenState extends State<AllUserScreen> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(30),
-                  child: ListView.builder(
-                    itemCount: usersData.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(width: 1, color: Colors.grey),
-                          ),
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (ctx) {
-                                  return ChatScreen(
-                                    reciever: usersData[index]['username'],
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          title: Text(
-                            usersData[index]['username'],
-                            style: GoogleFonts.comfortaa().copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: const Text("subtite text"),
-                          leading: ProfilePicWidget(
-                              imagePath: usersData[index]['image_url']),
-                        ),
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("users")
+                        .orderBy("createdAt", descending: true)
+                        .snapshots(),
+                    builder: (ctx, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(
+                          child: Text("No message found"),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text("Something went wrong!.."),
+                        );
+                      }
+                      final usersData = snapshot.data!.docs;
+                      return ListView.builder(
+                        itemCount: usersData.length,
+                        itemBuilder: (context, index) {
+                          return currentUser != usersData[index]['username']
+                              ? UserWidget(usersData: usersData[index])
+                              : null;
+                        },
                       );
                     },
                   ),
@@ -138,6 +165,48 @@ class _AllUserScreenState extends State<AllUserScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class UserWidget extends StatelessWidget {
+  const UserWidget({
+    super.key,
+    required this.usersData,
+  });
+
+  final usersData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 1, color: Colors.grey),
+        ),
+      ),
+      child: ListTile(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (ctx) {
+                return ChatScreen(
+                  reciever: usersData['username'],
+                );
+              },
+            ),
+          );
+        },
+        title: Text(
+          usersData['username'],
+          style: GoogleFonts.comfortaa().copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: const Text("subtite text"),
+        leading: ProfilePicWidget(imagePath: usersData['image_url']),
       ),
     );
   }
