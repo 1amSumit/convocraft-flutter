@@ -33,10 +33,9 @@ class MyApp extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
-            print("all user screen");
             return const AllUserScreen();
           }
-          print("getting started screen");
+
           return const GettingStartedScreen();
         },
       ),

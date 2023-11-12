@@ -40,24 +40,20 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
             '${widget.recieverUser}-${senderUserData.data()!['username']}')
         .get();
 
-    if (firstCollection.docs.isEmpty) {
-      if (secondCollection.docs.isEmpty) {
-        setState(() {
-          messageCollectionName =
-              '${senderUserData.data()!['username']}-${widget.recieverUser}';
-        });
-      }
-    } else if (firstCollection.docs.isNotEmpty) {
-      if (secondCollection.docs.isEmpty) {
-        setState(() {
-          messageCollectionName =
-              '${senderUserData.data()!['username']}-${widget.recieverUser}';
-        });
-      }
-    } else {
+    if (firstCollection.docs.isEmpty && secondCollection.docs.isEmpty) {
+      setState(() {
+        messageCollectionName =
+            '${senderUserData.data()!['username']}-${widget.recieverUser}';
+      });
+    } else if (firstCollection.docs.isEmpty) {
       setState(() {
         messageCollectionName =
             '${widget.recieverUser}-${senderUserData.data()!['username']}';
+      });
+    } else {
+      setState(() {
+        messageCollectionName =
+            '${senderUserData.data()!['username']}-${widget.recieverUser}';
       });
     }
 

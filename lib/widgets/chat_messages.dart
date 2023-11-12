@@ -22,6 +22,7 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
     setState(() {
       loadingMessage = true;
     });
+
     final senderUser = FirebaseAuth.instance.currentUser!;
     final senderUserData = await FirebaseFirestore.instance
         .collection("users")
@@ -38,24 +39,20 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
             '${widget.recieverName}-${senderUserData.data()!['username']}')
         .get();
 
-    if (firstCollection.docs.isEmpty) {
-      if (secondCollection.docs.isEmpty) {
-        setState(() {
-          messageCollectionName =
-              '${senderUserData.data()!['username']}-${widget.recieverName}';
-        });
-      }
-    } else if (firstCollection.docs.isNotEmpty) {
-      if (secondCollection.docs.isEmpty) {
-        setState(() {
-          messageCollectionName =
-              '${senderUserData.data()!['username']}-${widget.recieverName}';
-        });
-      }
-    } else {
+    if (firstCollection.docs.isEmpty && secondCollection.docs.isEmpty) {
+      setState(() {
+        messageCollectionName =
+            '${senderUserData.data()!['username']}-${widget.recieverName}';
+      });
+    } else if (firstCollection.docs.isEmpty) {
       setState(() {
         messageCollectionName =
             '${widget.recieverName}-${senderUserData.data()!['username']}';
+      });
+    } else {
+      setState(() {
+        messageCollectionName =
+            '${senderUserData.data()!['username']}-${widget.recieverName}';
       });
     }
 
@@ -66,9 +63,13 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getCollection();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -115,7 +116,9 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
                     return widget.recieverName ==
                             lodedMessage[index].data()["userName"]
                         ? RecieverBubble(
-                            message: lodedMessage[index].data()["text"])
+                            message: lodedMessage[index].data()["text"],
+                            image_url: lodedMessage[index].data()["userImage"],
+                          )
                         : SenderBubble(
                             message: lodedMessage[index].data()["text"]);
                   },
