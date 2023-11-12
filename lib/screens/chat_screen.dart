@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.name});
-  final String name;
+  const ChatScreen({super.key, required this.reciever});
+  final String reciever;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -28,7 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
         foregroundColor: Colors.black,
         elevation: 0,
         title: Center(
-          child: Text(widget.name),
+          child: Text(widget.reciever),
         ),
         actions: [
           IconButton(
@@ -59,12 +59,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     bottomRight: Radius.circular(40),
                   ),
                 ),
-                child: ChatMessagesWidget(),
+                child: ChatMessagesWidget(
+                  recieverName: widget.reciever,
+                ),
               ),
             ),
             Expanded(
               child: SendMessageWidget(
-                recieverUser: widget.name,
+                recieverUser: widget.reciever,
               ),
             ),
           ],

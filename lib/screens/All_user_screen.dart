@@ -114,7 +114,7 @@ class _AllUserScreenState extends State<AllUserScreen> {
                               MaterialPageRoute(
                                 builder: (ctx) {
                                   return ChatScreen(
-                                    name: usersData[index]['username'],
+                                    reciever: usersData[index]['username'],
                                   );
                                 },
                               ),

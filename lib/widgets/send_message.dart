@@ -42,17 +42,23 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
 
     if (firstCollection.docs.isEmpty) {
       if (secondCollection.docs.isEmpty) {
-        messageCollectionName =
-            '${senderUserData.data()!['username']}-${widget.recieverUser}';
+        setState(() {
+          messageCollectionName =
+              '${senderUserData.data()!['username']}-${widget.recieverUser}';
+        });
       }
     } else if (firstCollection.docs.isNotEmpty) {
       if (secondCollection.docs.isEmpty) {
-        messageCollectionName =
-            '${senderUserData.data()!['username']}-${widget.recieverUser}';
+        setState(() {
+          messageCollectionName =
+              '${senderUserData.data()!['username']}-${widget.recieverUser}';
+        });
       }
     } else {
-      messageCollectionName =
-          '${widget.recieverUser}-${senderUserData.data()!['username']}';
+      setState(() {
+        messageCollectionName =
+            '${widget.recieverUser}-${senderUserData.data()!['username']}';
+      });
     }
 
     FirebaseFirestore.instance.collection(messageCollectionName).add({
