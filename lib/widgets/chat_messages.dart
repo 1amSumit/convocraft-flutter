@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:convocraft/widgets/reciever_message_bubble.dart';
+import 'package:convocraft/widgets/sender_message_bubble.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -103,14 +105,22 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
 
               final lodedMessage = chatSnapshot.data!.docs;
 
-              return ListView.builder(
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: ListView.builder(
                   reverse: true,
-                  padding: const EdgeInsets.only(
-                      left: 10, top: 10, right: 10, bottom: 30),
+                  padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
                   itemCount: lodedMessage.length,
                   itemBuilder: (ctx, index) {
-                    return Text(lodedMessage[index].data()["text"]);
-                  });
+                    return widget.recieverName ==
+                            lodedMessage[index].data()["userName"]
+                        ? RecieverBubble(
+                            message: lodedMessage[index].data()["text"])
+                        : SenderBubble(
+                            message: lodedMessage[index].data()["text"]);
+                  },
+                ),
+              );
             },
           );
   }
