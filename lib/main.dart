@@ -1,18 +1,18 @@
-import 'package:convocraft/firebase_options.dart';
-import 'package:convocraft/screens/All_user_screen.dart';
+// import 'package:convocraft/firebase_options.dart';
+// import 'package:convocraft/screens/All_user_screen.dart';
 import 'package:convocraft/screens/getting_started.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import "package:firebase_core/firebase_core.dart";
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
-    const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
+    ),
   );
 }
 
@@ -21,24 +21,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ConvoCraft",
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SpinKitSpinningLines(
-              color: Colors.black,
-            );
-          }
-          if (snapshot.hasData) {
-            return const AllUserScreen();
-          }
-
-          return const GettingStartedScreen();
-        },
-      ),
+      home: GettingStartedScreen(),
     );
   }
 }
+
+// home: StreamBuilder(
+//         stream: FirebaseAuth.instance.authStateChanges(),
+//         builder: (ctx, snapshot) {
+//           if (snapshot.hasData) {
+//             return AllUserScreen();
+//           }
+//           return GettingStartedScreen();
+//         },
+//       ),

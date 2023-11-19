@@ -14,7 +14,7 @@ class AllUserScreen extends StatefulWidget {
 }
 
 class _AllUserScreenState extends State<AllUserScreen> {
-  String currentUser = "";
+  var currentUser;
 
   void getCurrentUserName() async {
     final user = FirebaseAuth.instance.currentUser!;
@@ -34,6 +34,11 @@ class _AllUserScreenState extends State<AllUserScreen> {
   void initState() {
     super.initState();
     getCurrentUserName();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

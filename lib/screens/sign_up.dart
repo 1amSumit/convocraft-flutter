@@ -1,23 +1,25 @@
 // import 'package:convocraft/screens/All_user_screen.dart';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:convocraft/widgets/avatar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import "package:firebase_auth/firebase_auth.dart";
-import "package:firebase_storage/firebase_storage.dart";
+// import "package:firebase_auth/firebase_auth.dart";
+// import "package:firebase_storage/firebase_storage.dart";
 
-final _firebase = FirebaseAuth.instance;
+// final _firebase = FirebaseAuth.instance;
 
-class SignUpScreen extends StatefulWidget {
+import "package:flutter_riverpod/flutter_riverpod.dart";
+
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   bool isLogin = true;
   String enteredname = "";
   String enteredEmail = "";
@@ -33,61 +35,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  void submit() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+  void submit() {
+    final isValidated = _formKey.currentState!.validate();
 
-      try {
-        setState(() {
-          isUploading = true;
-        });
-        if (isLogin) {
-          final userCredential = await _firebase.signInWithEmailAndPassword(
-              email: enteredEmail, password: enteredPassword);
-          print(userCredential);
-        } else {
-          final userCredintials =
-              await _firebase.createUserWithEmailAndPassword(
-            email: enteredEmail,
-            password: enteredPassword,
-          );
-
-          final storageRef = FirebaseStorage.instance
-              .ref()
-              .child("user_imges")
-              .child('${userCredintials.user!.uid}.jpg');
-
-          await storageRef.putFile(imageTaken!);
-          final imageUrl = await storageRef.getDownloadURL();
-
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userCredintials.user!.uid)
-              .set({
-            'username': enteredname,
-            'email': enteredEmail,
-            'image_url': imageUrl,
-            "createdAt": Timestamp.now()
-          });
-        }
-        setState(() {
-          isUploading = false;
-        });
-      } on FirebaseAuthException catch (error) {
-        print("error hai bhaii");
-        if (error.code == "email-already-in-use") {
-          //...
-        }
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message ?? "Authentication Failed"),
-          ),
-        );
-        setState(() {
-          isUploading = false;
-        });
-      }
+    if (!isValidated) {
+      return;
     }
   }
 
@@ -271,3 +223,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+
+
+
+// void submit() async {
+//     if (_formKey.currentState!.validate()) {
+//       _formKey.currentState!.save();
+
+//       try {
+//         setState(() {
+//           isUploading = true;
+//         });
+//         if (isLogin) {
+//           final userCredential = await _firebase.signInWithEmailAndPassword(
+//               email: enteredEmail, password: enteredPassword);
+//           print(userCredential);
+//         } else {
+//           final userCredintials =
+//               await _firebase.createUserWithEmailAndPassword(
+//             email: enteredEmail,
+//             password: enteredPassword,
+//           );
+
+//           final storageRef = FirebaseStorage.instance
+//               .ref()
+//               .child("user_imges")
+//               .child('${userCredintials.user!.uid}.jpg');
+
+//           await storageRef.putFile(imageTaken!);
+//           final imageUrl = await storageRef.getDownloadURL();
+
+//           await FirebaseFirestore.instance
+//               .collection('users')
+//               .doc(userCredintials.user!.uid)
+//               .set({
+//             'username': enteredname,
+//             'email': enteredEmail,
+//             'image_url': imageUrl,
+//             "createdAt": Timestamp.now()
+//           });
+//         }
+//         setState(() {
+//           isUploading = false;
+//         });
+//       } on FirebaseAuthException catch (error) {
+//         print("error hai bhaii");
+//         if (error.code == "email-already-in-use") {
+//           //...
+//         }
+//         ScaffoldMessenger.of(context).clearSnackBars();
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(
+//             content: Text(error.message ?? "Authentication Failed"),
+//           ),
+//         );
+//         setState(() {
+//           isUploading = false;
+//         });
+//       }
+//     }
+//   }
